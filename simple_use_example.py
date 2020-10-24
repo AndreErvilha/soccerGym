@@ -24,7 +24,7 @@ if __name__ == "__main__":
         time.sleep(1/50) ### Default 50 FPS
 
         # observation, reward, done, info = env.step(commands)
-        observation, reward, done, info = env.step2([angle*50/3, angle*50/3])
+        observation, reward, done, info = env.step2git([angle*50/3, angle*50/3])
         # observation, reward, done, info = env.step2([0,0])
         # bestReward = reward if (reward>bestReward) else bestReward
         if(not env.render()):
