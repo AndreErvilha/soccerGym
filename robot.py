@@ -63,7 +63,7 @@ class robot:
         # self.vx -= self.vx*self.fatr
         # self.vy -= self.vy*self.fatr
 
-    def setWellsVel(self,vr,vl):
+    def setWellsVel(self,vl,vr):
         self.saveState()
         self.vr = vr
         self.vl = vl
