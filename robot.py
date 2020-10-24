@@ -4,7 +4,7 @@ class robot:
     def __init__(self, x = 0, y = 0, diam = 50, m = 0.5, ut = 1/50):
         # GENERICAL CONFIGURATIONS
         self.ut = ut
-        self.fatr = 0.50 # REDUCING IN 0,1% ACELLERATION
+        self.fatr = 0.01 # REDUCING IN 0,1% ACELLERATION
         self.m = m
         self.diameter = diam
         self.raio = diam/2
@@ -60,15 +60,11 @@ class robot:
         self.saveState()
         self.vx = vx
         self.vy = vy
-        # self.vx -= self.vx*self.fatr
-        # self.vy -= self.vy*self.fatr
 
-    def setWellsVel(self,vl,vr):
+    def setWellsVel(self,vr,vl):
         self.saveState()
-        self.vr = vr
         self.vl = vl
-        # self.vr -= self.vr*self.fatr
-        # self.vl -= self.vl*self.fatr
+        self.vr = vr
 
     def setForce(self,fx,fy):
         # >> Força > Aceleração > Velocidade > Deslocamento
@@ -113,13 +109,16 @@ class robot:
         r = self.raio
         d = self.diameter
 
-        vr_x = (self.vr+self.vl)*r/2
-        self.angle += (self.vr-self.vl)*r/d
+        vr_x = (self.vr+self.vl)/2 # Modulo velocidade Relativa Modulo
+        w = ((self.vr-self.vl)/50)*ut # Velocidade
+        self.angle += ((self.vr-self.vl)/50)*ut # Angulo
+        self.angle = self.angle%(math.pi*2) # 0,26
 
-        self.angle = self.angle%(math.pi*2)
+        self.vx = vr_x * math.cos(self.angle)
+        self.vy = vr_x * math.sin(self.angle)
 
-        self.x += vr_x * math.cos(self.angle)
-        self.y += vr_x * math.sin(self.angle)
+        self.x += self.vx*ut
+        self.y += self.vy*ut
 
         # self.x += self.vx * ut
         # self.y += self.vy * ut
@@ -129,16 +128,3 @@ class robot:
     def pos(self, x, y):
         self.x = x
         self.y = y
-
-"""
-p = player(0,0,30)
-
-p.move(100,1000)
-for i in range(50):
-    p.move(0,-20)
-    print("{}, {}, {}".format(i,p.X,p.Y))
-
-for i in range(50,100):
-    p.move(0,-20)
-    print("{}, {}, {}".format(i,p.X,p.Y))
-"""

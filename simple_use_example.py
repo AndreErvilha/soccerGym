@@ -14,19 +14,15 @@ if __name__ == "__main__":
     a=time.time()
     env = MyEnvionment()
 
-    env.reset()
+    observation, reward, done, info = env.reset()
     bestReward = 0
-    angle = math.pi * 2 / 360
-    # observation, reward, done, info = env.move2whells(angle*60,angle*30,0)
+    angle = math.pi * 2 / 360 # 1º
     for i in range(1000):
         commands = rnd_force()
+
+        observation, reward, done, info = env.step2([0,100])
         
         time.sleep(1/50) ### Default 50 FPS
-
-        # observation, reward, done, info = env.step(commands)
-        observation, reward, done, info = env.step2git([angle*50/3, angle*50/3])
-        # observation, reward, done, info = env.step2([0,0])
-        # bestReward = reward if (reward>bestReward) else bestReward
         if(not env.render()):
             break
 

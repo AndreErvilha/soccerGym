@@ -32,6 +32,8 @@ class environment:
 
         # Draw internal field
         pygame.draw.rect(self.display,GREEN,pygame.Rect(75,75,self.width-150,self.height-150))
+        pygame.draw.rect(self.display,BLUE,pygame.Rect(275,250,50,50))
+        pygame.draw.rect(self.display,BLUE,pygame.Rect(325,300,50,50))
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
