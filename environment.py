@@ -33,15 +33,20 @@ class environment:
         # Draw internal field
         pygame.draw.rect(self.display,GREEN,pygame.Rect(75,75,self.width-150,self.height-150))
 
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                return False
+
         # Draw player
         def draw_player(player, angle, color):
             pygame.draw.circle(self.display, color,(int(player.x),int(player.y)),int(player.raio))
-            # raio = player.raio-(player.raio/5)-5
+            raio = player.raio-(player.raio/5)-5
             # self.angle += 3
-            # radians = player.angle/360*math.pi
-            # sen = math.sin(radians)
-            # cos = math.cos(radians)
-            # pygame.draw.circle(self.display,YELLOW,(int(player.x+(raio*cos)),int(player.y+(raio*sen))),int(player.raio/5))
+            radians = player.angle  # radians = player.angle/360*math.pi
+            sen = math.sin(radians)
+            cos = math.cos(radians)
+            pygame.draw.circle(self.display,YELLOW,(int(player.x+(raio*cos)),int(player.y+(raio*sen))),int(player.raio/5))
 
         teams = 0
         for robot in self.robots:
@@ -53,6 +58,7 @@ class environment:
 
         # Desenha tela
         pygame.display.update()
+        return True
 
     def reset(self):
         cont = 2
@@ -69,7 +75,7 @@ class environment:
 
         return self.observation(), self.rewarde(), 0, self.info()
 
-    def step(self, commands):
+    def step2(self, commands):
         cont = 0
         for robot in self.robots:
             if cont == 0:
@@ -77,7 +83,30 @@ class environment:
                 pass
             else:
                 # robot.setForce(commands[0],commands[1])
-                robot.setVel(commands[0],commands[1])
+                # robot.setWellsForce(commands[0],commands[1])
+                # print(commands)
+                robot.setWellsVel(commands[0],commands[1])
+
+            robot.step2()
+            self.__collide_with_wall(robot)
+            cont+=1
+
+        done = self.__verify_collisions()
+        obs = self.observation()
+        reward = self.rewarde()
+        #done = self.done()
+        info = self.info()
+        return obs, reward, done, info
+
+    def step(self, commands):
+        cont = 0
+        for robot in self.robots:
+            if cont == 0:
+                # robot.setForce(0,0)
+                pass
+            else:
+                robot.setForce(commands[0],commands[1])
+                # robot.setVel(commands[0],commands[1])
 
             robot.step()
             self.__collide_with_wall(robot)

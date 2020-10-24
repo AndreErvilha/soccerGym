@@ -1,5 +1,5 @@
 from my_environment import *
-import time, random
+import time, random, math
 
 def rnd_force():
     #x1 = random.randint(-5000,5000)
@@ -16,12 +16,18 @@ if __name__ == "__main__":
 
     env.reset()
     bestReward = 0
-    for i in range(10000):
+    angle = math.pi * 2 / 360
+    # observation, reward, done, info = env.move2whells(angle*60,angle*30,0)
+    for i in range(1000):
         commands = rnd_force()
-        ### Default 50 FPS
-        # time.sleep(1/50)
-        observation, reward, done, info = env.step(commands)
-        bestReward = reward if (reward>bestReward) else bestReward
-        env.render()
+        
+        time.sleep(1/50) ### Default 50 FPS
+
+        # observation, reward, done, info = env.step(commands)
+        observation, reward, done, info = env.step2([angle*50,angle*25*0])
+        # observation, reward, done, info = env.step2([0,0])
+        # bestReward = reward if (reward>bestReward) else bestReward
+        if(not env.render()):
+            break
 
     print("Time execution was: {}, best reward was: {}".format((time.time()-a),bestReward))
