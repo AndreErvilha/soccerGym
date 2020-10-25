@@ -1,12 +1,14 @@
+from robot import *
+import math
+
 from environment import *
 class MyEnvionment(environment):
-    
-    # You can override methods and implement your own environment
-    def render(self):
-        return super().render() 
 
-    def reset(self):
-        return super().reset()
+    def done(self):
+        return super().done()
+    
+    def info(self):
+        return super().info()
 
     def observation(self):
         obs = super().observation()
@@ -21,6 +23,14 @@ class MyEnvionment(environment):
             ball_vel[0]-player_vel[0],
             ball_vel[1]-player_vel[1]
         ]
+    
+    # You can override methods and implement your own environment
+    def render(self):
+        return super().render() 
+
+    def reset(self):
+        return super().reset()
+
 
     def reward(self):
         # angulo vetor (robo->bola)
@@ -30,11 +40,47 @@ class MyEnvionment(environment):
         delta = delta/math.pi*1000
         return 1000-delta;
 
-    def done(self):
-        return super().done()
+    # def step(self, commands):
+    #     cont = 0
+    #     for robot in self.robots:
+    #         if cont == 0:
+    #             # robot.setForce(0,0)
+    #             pass
+    #         else:
+    #             # robot.setForce(commands[0],commands[1])
+    #             # print(robot.angle)
+    #             robot.setAngle(commands[2])
+    #         cont += 1
+        
+    #     return super().step(commands)
 
-    def info(self):
-        return super().info()
+    # def move2whells(self,vr,vl):
+
+    #     # commands = [vr,vl,teta]
+    #     # print()
+    #     # print(commands)
+
+    #     self.robots[1].angle
+    #     # diameter robot 50, then radius is 25
+
+    #     vr_x = (vr*25+vl*25)/2
+    #     angle = (vr*25-vl*25)/50
+        
+    #     self.robots[1].angle += (angle+teta)%(math.pi*2)
+
+    #     # print('vx: {}, angle: {}'.format(vr_x,angle))
+
+    #     vx = vr_x * math.cos(self.robots[1].angle)
+    #     vy = vr_x * math.sin(self.robots[1].angle)
+
+    #     commands = [vx,vy,(angle+teta)%(math.pi*2)]
+    #     # print(commands)
+    #     # print('x: {} y: {}'.format(self.robots[0].x,self.robots[1].y))
+        
+    #     # self.robots[1].pos(vx*10+150,vy*10+150)
+    #     # self.robots[1].setAngle((angle+teta)%(math.pi*2))
+
+    #     return self.step(commands)
 
 if __name__ == "__main__":
     env = MyEnvionment()

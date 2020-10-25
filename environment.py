@@ -32,16 +32,25 @@ class environment:
 
         # Draw internal field
         pygame.draw.rect(self.display,GREEN,pygame.Rect(75,75,self.width-150,self.height-150))
+        pygame.draw.circle(self.display, BLACK, (250,300),(5))
+        pygame.draw.circle(self.display, BLUE, (350,300),(5))
+        # pygame.draw.rect(self.display,BLUE,pygame.Rect(275,250,50,50))
+        # pygame.draw.rect(self.display,BLUE,pygame.Rect(325,300,50,50))
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                return False
 
         # Draw player
         def draw_player(player, angle, color):
             pygame.draw.circle(self.display, color,(int(player.x),int(player.y)),int(player.raio))
-            # raio = player.raio-(player.raio/5)-5
+            raio = player.raio-(player.raio/5)-5
             # self.angle += 3
-            # radians = player.angle/360*math.pi
-            # sen = math.sin(radians)
-            # cos = math.cos(radians)
-            # pygame.draw.circle(self.display,YELLOW,(int(player.x+(raio*cos)),int(player.y+(raio*sen))),int(player.raio/5))
+            radians = player.angle  # radians = player.angle/360*math.pi
+            sen = math.sin(radians)
+            cos = math.cos(radians)
+            pygame.draw.circle(self.display,YELLOW,(int(player.x+(raio*cos)),int(player.y+(raio*sen))),int(player.raio/5))
 
         teams = 0
         for robot in self.robots:
@@ -53,6 +62,7 @@ class environment:
 
         # Desenha tela
         pygame.display.update()
+        return True
 
     def reset(self):
         cont = 2
@@ -69,6 +79,28 @@ class environment:
 
         return self.observation(), self.rewarde(), 0, self.info()
 
+    def step2(self, commands):
+        cont = 0
+        for robot in self.robots:
+            if cont == 0:
+                # robot.setForce(0,0)
+                pass
+            else:
+                robot.setWellsForce(commands[0],commands[1])
+                # print(commands)
+                # robot.setWellsVel(commands[0],commands[1])
+
+            robot.step2()
+            self.__collide_with_wall(robot)
+            cont+=1
+
+        done = self.__verify_collisions()
+        obs = self.observation()
+        reward = self.rewarde()
+        #done = self.done()
+        info = self.info()
+        return obs, reward, done, info
+
     def step(self, commands):
         cont = 0
         for robot in self.robots:
@@ -76,7 +108,12 @@ class environment:
                 # robot.setForce(0,0)
                 pass
             else:
+<<<<<<< HEAD
                 robot.setForce(commands[1][0],commands[1][1])
+=======
+                robot.setForce(commands[0],commands[1])
+                # robot.setVel(commands[0],commands[1])
+>>>>>>> movimentacao_2_rodas
 
             robot.step()
             self.__collide_with_wall(robot)
@@ -229,13 +266,21 @@ class environment:
             if player.left() < 0:
                 player.x = 0+player.raio
                 player.vx *= -.4
+                player.vr *= -.4
+                player.vl *= -.4
             elif player.right() > self.width:
                 player.x = self.width-player.raio
                 player.vx *= -.4
+                player.vr *= -.4
+                player.vl *= -.4
             #vertically
             if player.top() < 0:
                 player.y = 0+player.raio
                 player.vy *= -.4
+                player.vr *= -.4
+                player.vl *= -.4
             elif player.bottom() > self.height:
                 player.y = self.height-player.raio
                 player.vy *= -.4
+                player.vr *= -.4
+                player.vl *= -.4
