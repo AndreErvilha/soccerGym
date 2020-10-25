@@ -76,8 +76,7 @@ class environment:
                 # robot.setForce(0,0)
                 pass
             else:
-                # robot.setForce(commands[0],commands[1])
-                robot.setVel(commands[0],commands[1])
+                robot.setForce(commands[1][0],commands[1][1])
 
             robot.step()
             self.__collide_with_wall(robot)
