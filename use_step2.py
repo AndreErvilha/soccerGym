@@ -58,15 +58,15 @@ if __name__ == "__main__":
     # Example 100x (1/50)s >>> Percorrido 2s
     for i in range(200):
         if(i==0):
-            env.step2([f*75,f*25]) # set force go around blue
+            env.step2([[0,0],[f*75,f*25]]) # set force go around blue
         elif(i==50):
-            env.step2([-f*75,-f*25]) # unset force
-            env.step2([f*25,f*75]) # set force go around black
+            env.step2([[0,0],[-f*75,-f*25]]) # unset force
+            env.step2([[0,0],[f*25,f*75]]) # set force go around black
         elif(i==100):
-            env.step2([-f*25,-f*75]) # unset force
-            env.step2([f*50,f*50]) # set force go
+            env.step2([[0,0],[-f*25,-f*75]]) # unset force
+            env.step2([[0,0],[f*50,f*50]]) # set force go
         else:
-            env.step2([0,0])
+            env.step2([[0,0],[0,0]])
         
         time.sleep(1/50) ### Default 50 FPS
         if(not env.render()):

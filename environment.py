@@ -2,12 +2,13 @@ from robot import *
 import math, pygame
 
 # define some colors
-BLACK = (0, 0, 0, 255)
+BLACK = (20, 20, 20, 255)
 WHITE = (255, 255, 255, 255)
 RED = (255, 0, 0, 255)
-GREEN = (0, 255, 0, 255)
-BLUE = (0, 0, 255, 255)
-YELLOW = (255, 255, 0, 255)
+GREEN = (81, 150, 116, 255)
+GRAY = (200, 200, 200, 255)
+YELLOW = (255, 200, 0, 255)
+BLUE = (0, 55, 200, 255)
 
 class environment:
     def __init__(self):
@@ -19,6 +20,7 @@ class environment:
         self.height = 600
         self.display = None
         self.angle = 0
+        self.elasticity = 0.4
         
     def render(self):
         if(self.display == None):
@@ -28,14 +30,14 @@ class environment:
 
         self.angle += 1
         # Draw external field
-        pygame.draw.rect(self.display,BLUE,pygame.Rect(0,0,self.width,self.height))
+        pygame.draw.rect(self.display,GRAY,pygame.Rect(0,0,self.width,self.height))
 
         # Draw internal field
         pygame.draw.rect(self.display,GREEN,pygame.Rect(75,75,self.width-150,self.height-150))
-        pygame.draw.circle(self.display, BLACK, (250,300),(5))
-        pygame.draw.circle(self.display, BLUE, (350,300),(5))
-        # pygame.draw.rect(self.display,BLUE,pygame.Rect(275,250,50,50))
-        # pygame.draw.rect(self.display,BLUE,pygame.Rect(325,300,50,50))
+        # pygame.draw.circle(self.display, BLUE, (250,300),(5))
+        # pygame.draw.circle(self.display, GRAY, (350,300),(5))
+        # pygame.draw.rect(self.display,GRAY,pygame.Rect(275,250,50,50))
+        # pygame.draw.rect(self.display,GRAY,pygame.Rect(325,300,50,50))
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -50,14 +52,14 @@ class environment:
             radians = player.angle  # radians = player.angle/360*math.pi
             sen = math.sin(radians)
             cos = math.cos(radians)
-            pygame.draw.circle(self.display,YELLOW,(int(player.x+(raio*cos)),int(player.y+(raio*sen))),int(player.raio/5))
+            pygame.draw.circle(self.display,BLACK,(int(player.x+(raio*cos)),int(player.y+(raio*sen))),int(player.raio/5))
 
         teams = 0
         for robot in self.robots:
             if teams == 0:
-                draw_player(robot,self.angle,BLACK)
+                draw_player(robot,self.angle,YELLOW)
             else:
-                draw_player(robot,self.angle,RED)
+                draw_player(robot,self.angle,BLUE)
             teams +=1
 
         # Desenha tela
@@ -105,12 +107,34 @@ class environment:
         cont = 0
         for robot in self.robots:
             if cont == 0:
-                # robot.setForce(0,0)
+                robot.setForce(commands[0][0],commands[0][1])
                 pass
             else:
                 robot.setForce(commands[1][0],commands[1][1])
 
             robot.step()
+            self.__collide_with_wall(robot)
+            cont+=1
+
+        done = self.__verify_collisions()
+        obs = self.observation()
+        reward = self.rewarde()
+        #done = self.done()
+        info = self.info()
+        return obs, reward, done, info
+
+    def step2(self, commands):
+        cont = 0
+        for robot in self.robots:
+            if cont == 0:
+                robot.setWellsForce(commands[0][0],commands[0][1])
+                pass
+            else:
+                robot.setWellsForce(commands[1][0],commands[1][1])
+                # print(commands)
+                # robot.setWellsVel(commands[0],commands[1])
+
+            robot.step2()
             self.__collide_with_wall(robot)
             cont+=1
 
@@ -146,6 +170,10 @@ class environment:
         return {}
 
     def __collide(self, robo1, robo2):
+        # imprime dados antes processamento da colisao
+        print('Antes')
+        print('x:{}, y:{}, vx:{}, vy:{}'.format(robo1.x,robo1.y,robo1.vx,robo1.vy))
+        print('x:{}, y:{}, vx:{}, vy:{}'.format(robo2.x,robo2.y,robo2.vx,robo2.vy))
         '''
         1. Decompor velocidade dos robos na componente beta
         2. Subtrair velocidade da componente beta da velocidade do robô
@@ -226,16 +254,32 @@ class environment:
         robo1.vx += v1 * math.cos(beta)
         robo1.vy += v1 * math.sin(beta)
 
+        # Ajustes para funcionamento da movimentação 2 rodas
+        var_x = robo2.angle-robo1.angle # Angulo entre os dois robos (#ref 2>1)
+
+        mod_vel = math.hypot(robo1.vx*math.cos(delta1-robo1.angle),robo1.vy*math.sin(delta1-robo1.angle))/2 # modulo da velocidade transferida
+        robo1.vl = robo1.vr = mod_vel*math.cos(var_x) # velocidade transferida no eixo x referencial
+
+        var_x = robo1.angle-robo2.angle # Angulo entre os dois robos (#ref 1>2)
+
+        mod_vel = math.hypot(robo2.vx*math.cos(delta2-robo2.angle),robo2.vy*math.sin(delta2-robo2.angle))/2 # modulo da velocidade transferida
+        robo2.vl = robo2.vr = mod_vel*math.cos(var_x) # velocidade transferida no eixo x referencial
+
         ''' ##########################################################################
-        ### Em caso de colisão o robo recebe a ultima posição antes da colisaõ
+        ### Em caso de colisão o robo recebe a ultima posição antes da colisão
         ### isso evita que os objetos fiquem sobrepostos
         ########################################################################## '''
-        
+
         robo1.x = robo1.last_x
         robo2.x = robo2.last_x
         robo1.y = robo1.last_y
         robo2.y = robo2.last_y
-        
+
+        # imprime dados após processamento da colisao
+        print('Depois')
+        print('x:{}, y:{}, vx:{}, vy:{}'.format(robo1.x,robo1.y,robo1.vx,robo1.vy))
+        print('x:{}, y:{}, vx:{}, vy:{}'.format(robo2.x,robo2.y,robo2.vx,robo2.vy))
+        print()
         
     def __verify_collisions(self):
         robot1 = self.robots[0]
@@ -260,22 +304,22 @@ class environment:
             # horizontally
             if player.left() < 0:
                 player.x = 0+player.raio
-                player.vx *= -.4
-                player.vr *= -.4
-                player.vl *= -.4
+                player.vx *= -self.elasticity
+                player.vr *= -self.elasticity
+                player.vl *= -self.elasticity
             elif player.right() > self.width:
                 player.x = self.width-player.raio
-                player.vx *= -.4
-                player.vr *= -.4
-                player.vl *= -.4
+                player.vx *= -self.elasticity
+                player.vr *= -self.elasticity
+                player.vl *= -self.elasticity
             #vertically
             if player.top() < 0:
                 player.y = 0+player.raio
-                player.vy *= -.4
-                player.vr *= -.4
-                player.vl *= -.4
+                player.vy *= -self.elasticity
+                player.vr *= -self.elasticity
+                player.vl *= -self.elasticity
             elif player.bottom() > self.height:
                 player.y = self.height-player.raio
-                player.vy *= -.4
-                player.vr *= -.4
-                player.vl *= -.4
+                player.vy *= -self.elasticity
+                player.vr *= -self.elasticity
+                player.vl *= -self.elasticity
