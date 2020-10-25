@@ -12,15 +12,19 @@ class robot:
         # ACTUAL STATE OF THE PLAYER
         self.x = x
         self.y = y 
+        self.angle = 1.5*math.pi
+
         self.vx = 0
         self.vy = 0
         self.vr = 0
         self.vl = 0
+        self.vAngle = 0
+
         self.ax = 0
         self.ay = 0
         self.ar = 0
         self.al = 0
-        self.angle = 1.5*math.pi
+        self.aAngle = 0
 
         # LAST STATE OF THE PLAYER
         self.last_x = 0
@@ -106,12 +110,17 @@ class robot:
         if(ut==None):
             ut = self.ut
 
+        # APPLY FORCE AND CALCULATE ACELLERATION, VELOCITY AND POSITION
+        self.vr += self.ar*ut
+        self.vl += self.al*ut
+
         r = self.raio
         d = self.diameter
 
-        vr_x = (self.vr+self.vl)/2 # Modulo velocidade Relativa Modulo
-        w = ((self.vr-self.vl)/50)*ut # Velocidade
-        self.angle += ((self.vr-self.vl)/50)*ut # Angulo
+        vr_x = (self.vr+self.vl)/2 # velocidade em x no referencial do robo
+        w = ((self.vr-self.vl)/50) # velocidade angular
+        
+        self.angle += (w*ut) # Angulo
         self.angle = self.angle%(math.pi*2) # 0,26
 
         self.vx = vr_x * math.cos(self.angle)
@@ -123,7 +132,7 @@ class robot:
         # self.x += self.vx * ut
         # self.y += self.vy * ut
 
-        print('vr: {}, vl:{}, vr_x:{}, angle:{}, vx:{}, vy:{}'.format(self.vr,self.vl,vr_x,self.angle,self.vx,self.vy))
+        # print('vr:{}, vl:{}, vr_x:{}, angle:{}, vx:{}, vy:{}, x:{}, y:{}'.format(self.vr,self.vl,vr_x,self.angle,self.vx,self.vy,self.x,self.y))
 
     def pos(self, x, y):
         self.x = x

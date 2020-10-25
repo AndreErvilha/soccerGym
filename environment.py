@@ -32,8 +32,10 @@ class environment:
 
         # Draw internal field
         pygame.draw.rect(self.display,GREEN,pygame.Rect(75,75,self.width-150,self.height-150))
-        pygame.draw.rect(self.display,BLUE,pygame.Rect(275,250,50,50))
-        pygame.draw.rect(self.display,BLUE,pygame.Rect(325,300,50,50))
+        pygame.draw.circle(self.display, BLACK, (250,300),(5))
+        pygame.draw.circle(self.display, BLUE, (350,300),(5))
+        # pygame.draw.rect(self.display,BLUE,pygame.Rect(275,250,50,50))
+        # pygame.draw.rect(self.display,BLUE,pygame.Rect(325,300,50,50))
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -84,10 +86,9 @@ class environment:
                 # robot.setForce(0,0)
                 pass
             else:
-                # robot.setForce(commands[0],commands[1])
-                # robot.setWellsForce(commands[0],commands[1])
+                robot.setWellsForce(commands[0],commands[1])
                 # print(commands)
-                robot.setWellsVel(commands[0],commands[1])
+                # robot.setWellsVel(commands[0],commands[1])
 
             robot.step2()
             self.__collide_with_wall(robot)
@@ -261,13 +262,21 @@ class environment:
             if player.left() < 0:
                 player.x = 0+player.raio
                 player.vx *= -.4
+                player.vr *= -.4
+                player.vl *= -.4
             elif player.right() > self.width:
                 player.x = self.width-player.raio
                 player.vx *= -.4
+                player.vr *= -.4
+                player.vl *= -.4
             #vertically
             if player.top() < 0:
                 player.y = 0+player.raio
                 player.vy *= -.4
+                player.vr *= -.4
+                player.vl *= -.4
             elif player.bottom() > self.height:
                 player.y = self.height-player.raio
                 player.vy *= -.4
+                player.vr *= -.4
+                player.vl *= -.4
