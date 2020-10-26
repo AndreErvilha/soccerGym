@@ -11,9 +11,9 @@ YELLOW = (255, 200, 0, 255)
 BLUE = (0, 55, 200, 255)
 
 class environment:
-    def __init__(self):
-        robot1 = robot(diam=30,m=0.1)
-        robot2 = robot()
+    def __init__(self,ut=1/50):
+        robot1 = robot(diam=30,m=0.1,fatr=1,ut=ut)
+        robot2 = robot(fatr=1,ut=ut)
 
         self.robots = [robot1,robot2]
         self.width = 1000
@@ -21,6 +21,7 @@ class environment:
         self.display = None
         self.angle = 0
         self.elasticity = 0.4
+        self.key = ''
         
     def render(self):
         if(self.display == None):
@@ -43,6 +44,9 @@ class environment:
             if event.type == pygame.QUIT:
                 pygame.quit()
                 return False
+            if event.type == pygame.KEYDOWN:
+                self.key = event.key
+                # print(self.key)    
 
         # Draw player
         def draw_player(player, angle, color):
@@ -71,6 +75,7 @@ class environment:
         for robot in self.robots:
             robot.x = self.width/cont
             robot.y = self.height/cont
+            robot.angle = 0
             cont+=1
 
         # self.robots[0].pos(self.width/4,self.height/2)
@@ -79,16 +84,17 @@ class environment:
         self.robots[0].pos(100,100)
         self.robots[1].pos(300,300)
 
-        return self.observation(), self.rewarde(), 0, self.info()
+        return self.observation()
 
     def step2(self, commands):
         cont = 0
         for robot in self.robots:
             if cont == 0:
                 # robot.setForce(0,0)
+                robot.setWellsForce(commands[0][1],commands[0][1])
                 pass
             else:
-                robot.setWellsForce(commands[0],commands[1])
+                robot.setWellsForce(commands[1][0],commands[1][1])
                 # print(commands)
                 # robot.setWellsVel(commands[0],commands[1])
 
@@ -171,9 +177,9 @@ class environment:
 
     def __collide(self, robo1, robo2):
         # imprime dados antes processamento da colisao
-        print('Antes')
-        print('x:{}, y:{}, vx:{}, vy:{}'.format(robo1.x,robo1.y,robo1.vx,robo1.vy))
-        print('x:{}, y:{}, vx:{}, vy:{}'.format(robo2.x,robo2.y,robo2.vx,robo2.vy))
+        # print('Antes')
+        # print('x:{}, y:{}, vx:{}, vy:{}'.format(robo1.x,robo1.y,robo1.vx,robo1.vy))
+        # print('x:{}, y:{}, vx:{}, vy:{}'.format(robo2.x,robo2.y,robo2.vx,robo2.vy))
         '''
         1. Decompor velocidade dos robos na componente beta
         2. Subtrair velocidade da componente beta da velocidade do robô
@@ -276,10 +282,10 @@ class environment:
         robo2.y = robo2.last_y
 
         # imprime dados após processamento da colisao
-        print('Depois')
-        print('x:{}, y:{}, vx:{}, vy:{}'.format(robo1.x,robo1.y,robo1.vx,robo1.vy))
-        print('x:{}, y:{}, vx:{}, vy:{}'.format(robo2.x,robo2.y,robo2.vx,robo2.vy))
-        print()
+        # print('Depois')
+        # print('x:{}, y:{}, vx:{}, vy:{}'.format(robo1.x,robo1.y,robo1.vx,robo1.vy))
+        # print('x:{}, y:{}, vx:{}, vy:{}'.format(robo2.x,robo2.y,robo2.vx,robo2.vy))
+        # print()
         
     def __verify_collisions(self):
         robot1 = self.robots[0]

@@ -1,10 +1,10 @@
 import math
 
 class robot:
-    def __init__(self, x = 0, y = 0, diam = 50, m = 0.5, ut = 1/50):
+    def __init__(self, x = 0, y = 0, diam = 50, m = 0.5, ut = 1/50, fatr = 1):
         # GENERICAL CONFIGURATIONS
         self.ut = ut
-        self.fatr = 0.01 # REDUCING IN 0,1% ACELLERATION
+        self.fatr = fatr # REDUCING IN 0,1% ACELLERATION
         self.m = m
         self.diameter = diam
         self.raio = diam/2
@@ -13,6 +13,7 @@ class robot:
         self.x = x
         self.y = y 
         self.angle = 1.5*math.pi
+        self.vmax = 50
 
         self.vx = 0
         self.vy = 0
@@ -34,6 +35,16 @@ class robot:
         self.last_ax = 0
         self.last_ay = 0
         self.last_angle = 0
+
+    # def limit_vel(self):
+    #     if(self.vx > self.vmax):
+    #         self.vx = self.vmax
+    #     if(self.vy > self.vmax):
+    #         self.vy = self.vmax
+    #     if(self.vr > self.vmax):
+    #         self.vr = self.vmax
+    #     if(self.vl > self.vmax):
+    #         self.vl = self.vmax
 
     def left(self):
         return self.x - (self.diameter/2)
@@ -94,6 +105,8 @@ class robot:
         self.vx += self.ax*ut
         self.vy += self.ay*ut
 
+        # self.limit_vel()
+
         #self.vx *= (1-self.elasticity)
         #self.vy *= (1-self.elasticity)
         
@@ -105,6 +118,8 @@ class robot:
         self.ay = 0
 
         #print("x:{},y:{},vx:{},vy:{},ax:{},ay:{}".format(self.x,self.y,self.vx,self.vy,self.ax,self.ay))
+        self.vx *= (1-self.fatr)
+        self.vy *= (1-self.fatr)
     
     def step2(self, ut=None):
         if(ut==None):
@@ -126,6 +141,8 @@ class robot:
         self.vx = vr_x * math.cos(self.angle)
         self.vy = vr_x * math.sin(self.angle)
 
+        # self.limit_vel()
+
         self.x += self.vx*ut
         self.y += self.vy*ut
 
@@ -133,6 +150,12 @@ class robot:
         # self.y += self.vy * ut
 
         # print('vr:{}, vl:{}, vr_x:{}, angle:{}, vx:{}, vy:{}, x:{}, y:{}'.format(self.vr,self.vl,vr_x,self.angle,self.vx,self.vy,self.x,self.y))
+        self.vx *= (1-self.fatr)
+        self.vy *= (1-self.fatr)
+        self.vr *= (1-self.fatr)
+        self.vl *= (1-self.fatr)
+
+        # self.limit_vel()
 
     def pos(self, x, y):
         self.x = x

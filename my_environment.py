@@ -2,8 +2,7 @@ from robot import *
 import math
 
 from environment import *
-class MyEnvionment(environment):
-
+class MyEnvironment(environment):
     def done(self):
         return super().done()
     
@@ -17,11 +16,11 @@ class MyEnvionment(environment):
         distance = math.hypot(ball_pos[0]-player_pos[0],ball_pos[1]-player_pos[1])
         ball_vel = obs["ball"]["vel"]
         player_vel = obs["player"]["vel"]
+        angle = math.atan2(ball_pos[1]-player_pos[1],ball_pos[0]-player_pos[0])
         return [
             (ball_pos[0]-player_pos[0])/distance,
             (ball_pos[1]-player_pos[1])/distance,
-            ball_vel[0]-player_vel[0],
-            ball_vel[1]-player_vel[1]
+            (angle-self.robots[1].angle)%(2*math.pi)
         ]
     
     # You can override methods and implement your own environment
@@ -32,13 +31,15 @@ class MyEnvionment(environment):
         return super().reset()
 
 
-    def reward(self):
-        # angulo vetor (robo->bola)
-        teta = math.atan(self.robots[0].y-self.robots[1].y,self.robots[0].x-self.robots[1].x)
-        alpha = math.atan(self.robots[0].ay-self.robots[1].ay,self.robots[0].ax-self.robots[1].ax)
-        delta = abs(teta-alpha)
-        delta = delta/math.pi*1000
-        return 1000-delta;
+    def rewarde(self):
+        obs = super().observation()
+        ball_pos = obs["ball"]["pos"]
+        player_pos = obs["player"]["pos"]
+        angle = math.atan2(ball_pos[1]-player_pos[1],ball_pos[0]-player_pos[0])
+        angle2 = (angle-self.robots[1].angle)%(math.pi)
+        angle2 = abs(math.sin(angle2))
+        reward = 300-(1-angle2)
+        return super().rewarde()+reward;
 
     # def step(self, commands):
     #     cont = 0

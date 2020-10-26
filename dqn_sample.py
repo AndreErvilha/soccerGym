@@ -7,9 +7,14 @@ if __name__ == "__main__":
     env = MyEnvionment()
     
     state_size = 4 # versor_posicao_axix_x, versor_posicao_axix_y, versor_velocidade_axix_x, versor_velocidade_axix_y
-    action_size = 8    # 0 - 35 
-                        # 0 >> 0º
-                        # 35 >> 350º
+
+    ''' |action | Left  | Right |
+        |   0   |   0   |   0   |
+        |   1   |   0   |   1   |
+        |   2   |   1   |   0   |
+        |   3   |   1   |   1   |
+    '''
+    action_size = 4    # 0 - 35 
 
     # Create an agent OBJECT
     agent = DQNAgent(state_size, action_size)
