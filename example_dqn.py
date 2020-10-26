@@ -42,8 +42,9 @@ for e in range(EPISODES):
     for time in range(1000):
         # delay.sleep(1/50)
         #render
-        # env.render()
-        action = agent.act(state)
+        env.render()
+        # action = agent.act(state)
+        action = agent.act_2(state)
         commands = actions[action]
         
         # if env.key != '':
@@ -73,7 +74,7 @@ for e in range(EPISODES):
         state = next_state
         if done:
             print("done     => episode: {}/{}, score: {:.2f}, e: {:.2}"
-                  .format(e, EPISODES, reward, agent.epsilon),end="")
+                  .format(e, EPISODES, reward, agent.epsilon))
             agent.replay(len(agent.memory))
             break
         if len(agent.memory) > batch_size:
@@ -83,8 +84,6 @@ for e in range(EPISODES):
             # print(reward)
             # print(state)
             print("not done => episode: {}/{}, score: {:.2f}, e: {:.2}"
-                  .format(e, EPISODES, reward, agent.epsilon),end="")
-    print()
-    if e % 1 == 0:
-        print(' save')
-        agent.save("./save/example_dqn.h5")
+                  .format(e, EPISODES, reward, agent.epsilon))
+    # if e % 1 == 0:
+    #     agent.save("./save/example_dqn.h5")
