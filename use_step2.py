@@ -56,7 +56,7 @@ if __name__ == "__main__":
     # Ciclo percorrido
     # Example 50x  (1/50)s >>> Percorrido 1s
     # Example 100x (1/50)s >>> Percorrido 2s
-    for i in range(200):
+    for i in range(10000):
         if(i<50):
             env.step2([[0,0],[f*75,f*25]]) # set force go around blue
         elif(i<100):
@@ -66,10 +66,10 @@ if __name__ == "__main__":
             env.step2([[0,0],[f*50,f*50]])
             # env.step2([[0,0],[0,0]])
 
-        print('vx_1: {}, vy_1:{}, vx_2:{}, vy_2:{}'.format(env.robots[0].vx,env.robots[0].vy,env.robots[1].vx,env.robots[1].vy))
+        # print('vx_1: {}, vy_1:{}, vx_2:{}, vy_2:{}'.format(env.robots[0].vx,env.robots[0].vy,env.robots[1].vx,env.robots[1].vy))
         
-        time.sleep(1/50) ### Default 50 FPS
-        if(not env.render()):
-            break
+        # time.sleep(1/50) ### Default 50 FPS
+        # if(not env.render()):
+            # break
 
     print("Time execution was: {}".format((time.time()-a)))

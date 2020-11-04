@@ -117,7 +117,7 @@ class robot:
         self.ax = 0
         self.ay = 0
 
-        #print("x:{},y:{},vx:{},vy:{},ax:{},ay:{}".format(self.x,self.y,self.vx,self.vy,self.ax,self.ay))
+        # print("x:{},y:{},vx:{},vy:{},ax:{},ay:{}".format(self.x,self.y,self.vx,self.vy,self.ax,self.ay))
         self.vx *= (1-self.fatr)
         self.vy *= (1-self.fatr)
     
@@ -140,6 +140,7 @@ class robot:
 
         self.vx = vr_x * math.cos(self.angle)
         self.vy = vr_x * math.sin(self.angle)
+        # print('vx{},vy{}'.format(self.vx,self.vy))
 
         # self.limit_vel()
 

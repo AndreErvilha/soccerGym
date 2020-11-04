@@ -12,15 +12,15 @@ BLUE = (0, 55, 200, 255)
 
 class environment:
     def __init__(self,ut=1/50):
-        robot1 = robot(diam=30,m=0.1,fatr=1,ut=ut)
-        robot2 = robot(fatr=1,ut=ut)
+        robot1 = robot(diam=30,m=0.1,fatr=0,ut=ut)
+        robot2 = robot(fatr=0,ut=ut)
 
         self.robots = [robot1,robot2]
         self.width = 1000
         self.height = 600
         self.display = None
         self.angle = 0
-        self.elasticity = 0.4
+        self.elasticity = 0.6
         self.key = ''
         
     def render(self):
@@ -263,12 +263,12 @@ class environment:
         # Ajustes para funcionamento da movimentação 2 rodas
         var_x = robo2.angle-robo1.angle # Angulo entre os dois robos (#ref 2>1)
 
-        mod_vel = math.hypot(robo1.vx*math.cos(delta1-robo1.angle),robo1.vy*math.sin(delta1-robo1.angle))/2 # modulo da velocidade transferida
+        mod_vel = math.hypot(robo1.vx*math.cos(delta1-robo1.angle),robo1.vy*math.sin(delta1-robo1.angle)) # modulo da velocidade transferida
         robo1.vl = robo1.vr = mod_vel*math.cos(var_x) # velocidade transferida no eixo x referencial
 
         var_x = robo1.angle-robo2.angle # Angulo entre os dois robos (#ref 1>2)
 
-        mod_vel = math.hypot(robo2.vx*math.cos(delta2-robo2.angle),robo2.vy*math.sin(delta2-robo2.angle))/2 # modulo da velocidade transferida
+        mod_vel = math.hypot(robo2.vx*math.cos(delta2-robo2.angle),robo2.vy*math.sin(delta2-robo2.angle)) # modulo da velocidade transferida
         robo2.vl = robo2.vr = mod_vel*math.cos(var_x) # velocidade transferida no eixo x referencial
 
         ''' ##########################################################################
@@ -306,26 +306,32 @@ class environment:
         return False
 
     def __collide_with_wall(self, player):
+            colided = False
             # Verify collisions between robot and walls
             # horizontally
             if player.left() < 0:
                 player.x = 0+player.raio
                 player.vx *= -self.elasticity
-                player.vr *= -self.elasticity
-                player.vl *= -self.elasticity
+                colided = True
             elif player.right() > self.width:
                 player.x = self.width-player.raio
                 player.vx *= -self.elasticity
-                player.vr *= -self.elasticity
-                player.vl *= -self.elasticity
+                colided = True
             #vertically
             if player.top() < 0:
                 player.y = 0+player.raio
                 player.vy *= -self.elasticity
-                player.vr *= -self.elasticity
-                player.vl *= -self.elasticity
+                colided = True
             elif player.bottom() > self.height:
                 player.y = self.height-player.raio
                 player.vy *= -self.elasticity
-                player.vr *= -self.elasticity
-                player.vl *= -self.elasticity
+                colided = True
+
+            if colided:
+                mod_vel = math.hypot(player.vx,player.vy)
+                angle = math.atan2(player.vy,player.vx)
+                delta = player.angle-angle
+                vel = mod_vel*math.cos(delta)
+                # print('vx{},vy{},angle{},delta{},vel{}'.format(player.vx,player.vy,angle,delta,vel))
+                player.vr = vel
+                player.vl = vel

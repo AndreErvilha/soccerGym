@@ -38,7 +38,7 @@ class MyEnvironment(environment):
         angle = math.atan2(ball_pos[1]-player_pos[1],ball_pos[0]-player_pos[0])
         angle2 = (angle-self.robots[1].angle)%(math.pi)
         angle2 = abs(math.sin(angle2))
-        reward = 300-(1-angle2)
+        reward = 300*(1-angle2)
         return super().rewarde()+reward;
 
     # def step(self, commands):
