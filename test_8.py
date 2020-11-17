@@ -11,15 +11,15 @@ if __name__ == "__main__":
     p1 = env.robots[1]
 
     p0.pos(50,50)
-    p0.diameter = 50
-    p0.raio = 25
+    p0.diameter = 25
+    p0.raio = 12.5
     p0.m = 1
     p0.angle = math.pi*6/4
     p0.saveState()
 
     p1.pos(800,500)
-    p1.diameter = 50
-    p1.raio = 25
+    p1.diameter = 25
+    p1.raio = 12.5
     p1.m = 1
     p1.angle = 0
     p1.saveState()

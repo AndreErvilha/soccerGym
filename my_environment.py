@@ -14,8 +14,6 @@ class MyEnvironment(environment):
         ball_pos = obs["ball"]["pos"]
         player_pos = obs["player"]["pos"]
         distance = math.hypot(ball_pos[0]-player_pos[0],ball_pos[1]-player_pos[1])
-        ball_vel = obs["ball"]["vel"]
-        player_vel = obs["player"]["vel"]
         angle = math.atan2(ball_pos[1]-player_pos[1],ball_pos[0]-player_pos[0])
         return [
             (ball_pos[0]-player_pos[0])/distance,
@@ -37,7 +35,7 @@ class MyEnvironment(environment):
         player_pos = obs["player"]["pos"]
         angle = math.atan2(ball_pos[1]-player_pos[1],ball_pos[0]-player_pos[0])
         angle2 = (angle-self.robots[1].angle)%(math.pi)
-        angle2 = abs(math.sin(angle2))
+        angle2 = abs(math.cos(angle2))
         reward = 300*(1-angle2)
         return super().rewarde()+reward;
 

@@ -12,8 +12,8 @@ BLUE = (0, 55, 200, 255)
 
 class environment:
     def __init__(self,ut=1/50):
-        robot1 = robot(diam=30,m=0.1,fatr=0,ut=ut)
-        robot2 = robot(fatr=0,ut=ut)
+        robot1 = robot(diam=30,m=0.1,fatr=1,ut=ut)
+        robot2 = robot(fatr=1,ut=ut,x=50,y=50)
 
         self.robots = [robot1,robot2]
         self.width = 1000
@@ -86,29 +86,6 @@ class environment:
 
         return self.observation()
 
-    def step2(self, commands):
-        cont = 0
-        for robot in self.robots:
-            if cont == 0:
-                # robot.setForce(0,0)
-                robot.setWellsForce(commands[0][1],commands[0][1])
-                pass
-            else:
-                robot.setWellsForce(commands[1][0],commands[1][1])
-                # print(commands)
-                # robot.setWellsVel(commands[0],commands[1])
-
-            robot.step2()
-            self.__collide_with_wall(robot)
-            cont+=1
-
-        done = self.__verify_collisions()
-        obs = self.observation()
-        reward = self.rewarde()
-        #done = self.done()
-        info = self.info()
-        return obs, reward, done, info
-
     def step(self, commands):
         cont = 0
         for robot in self.robots:
@@ -119,10 +96,10 @@ class environment:
                 robot.setForce(commands[1][0],commands[1][1])
 
             robot.step()
-            self.__collide_with_wall(robot)
+            self.collide_with_wall(robot)
             cont+=1
 
-        done = self.__verify_collisions()
+        done = self.verify_collisions()
         obs = self.observation()
         reward = self.rewarde()
         #done = self.done()
@@ -134,20 +111,16 @@ class environment:
         for robot in self.robots:
             if cont == 0:
                 robot.setWellsForce(commands[0][0],commands[0][1])
-                pass
             else:
                 robot.setWellsForce(commands[1][0],commands[1][1])
-                # print(commands)
-                # robot.setWellsVel(commands[0],commands[1])
 
             robot.step2()
-            self.__collide_with_wall(robot)
+            self.collide_with_wall(robot)
             cont+=1
 
-        done = self.__verify_collisions()
+        done = self.verify_collisions()
         obs = self.observation()
         reward = self.rewarde()
-        #done = self.done()
         info = self.info()
         return obs, reward, done, info
 
@@ -164,9 +137,11 @@ class environment:
         }
 
     def rewarde(self):
+        angle = math.atan2(self.robots[0].y-self.robots[0].y,self.robots[0].x-self.robots[0].x)
+        angle2 = abs(math.cos(angle-self.robots[1].angle))
         num = 1000*(self.robots[0].raio+self.robots[1].raio)
         distance = math.hypot(self.robots[0].x-self.robots[1].x,self.robots[0].y-self.robots[1].y)
-        return num/distance
+        return num/distance+angle*100
 
     def done(self):
         return ((self.robots[0].raio+self.robots[1].raio)+3) > math.hypot(self.robots[0].x-self.robots[1].x,
@@ -287,7 +262,7 @@ class environment:
         # print('x:{}, y:{}, vx:{}, vy:{}'.format(robo2.x,robo2.y,robo2.vx,robo2.vy))
         # print()
         
-    def __verify_collisions(self):
+    def verify_collisions(self):
         robot1 = self.robots[0]
         robot2 = self.robots[1]
 
@@ -305,7 +280,7 @@ class environment:
             return True
         return False
 
-    def __collide_with_wall(self, player):
+    def collide_with_wall(self, player):
             colided = False
             # Verify collisions between robot and walls
             # horizontally
@@ -328,6 +303,8 @@ class environment:
                 colided = True
 
             if colided:
+                player.x = player.last_x
+                player.y = player.last_y
                 mod_vel = math.hypot(player.vx,player.vy)
                 angle = math.atan2(player.vy,player.vx)
                 delta = player.angle-angle
@@ -335,3 +312,5 @@ class environment:
                 # print('vx{},vy{},angle{},delta{},vel{}'.format(player.vx,player.vy,angle,delta,vel))
                 player.vr = vel
                 player.vl = vel
+
+            return colided
