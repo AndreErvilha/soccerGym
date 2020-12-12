@@ -29,15 +29,15 @@ class MyEnvironment(environment):
         return super().reset()
 
 
-    def rewarde(self):
-        obs = super().observation()
-        ball_pos = obs["ball"]["pos"]
-        player_pos = obs["player"]["pos"]
-        angle = math.atan2(ball_pos[1]-player_pos[1],ball_pos[0]-player_pos[0])
-        angle2 = (angle-self.robots[1].angle)%(math.pi)
-        angle2 = abs(math.cos(angle2))
-        reward = 300*(1-angle2)
-        return super().rewarde()+reward;
+    # def rewarde(self):
+    #     obs = super().observation()
+    #     ball_pos = obs["ball"]["pos"]
+    #     player_pos = obs["player"]["pos"]
+    #     angle = math.atan2(ball_pos[1]-player_pos[1],ball_pos[0]-player_pos[0])
+    #     angle2 = (angle-self.robots[1].angle)%(math.pi)
+    #     angle2 = abs(math.cos(angle2))
+    #     reward = 300*(1-angle2)
+    #     return super().rewarde()#+reward;
 
     # def step(self, commands):
     #     cont = 0

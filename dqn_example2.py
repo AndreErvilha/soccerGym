@@ -3,33 +3,35 @@ from dqn import DQNAgent
 import numpy as np
 import time as delay
 
-EPISODES = 20000
-MOVES = 3000
-TRAINING = True
+EPISODES = 1000
+MOVES = 1000
+TRAINING = False
+# TRAINING = True
 
 state_size = 3
 action_size = 9
 
-maxForce = 100
+maxForce = 300
 
 actions = [
     [[0,0],[-maxForce,-maxForce]],
-    [[0,0],[-maxForce,0]],
+    [[0,0],[2*-maxForce,0]],
     [[0,0],[-maxForce,maxForce]],
-    [[0,0],[0,-maxForce]],
+    [[0,0],[0,2*-maxForce]],
     [[0,0],[0,0]],
-    [[0,0],[0,maxForce]],
+    [[0,0],[0,2*maxForce]],
     [[0,0],[maxForce,-maxForce]],
-    [[0,0],[maxForce,0]],
+    [[0,0],[2*maxForce,0]],
     [[0,0],[maxForce,maxForce]]
 ]
 
 agent = DQNAgent(state_size, action_size)
 
 #load
-agent.load("./save/example_dqn11.h5")
+agent.load("./save/execution1.h5")
 env = MyEnvironment(ut=3/50)
-batch_size = 32
+batch_size = 100
+print("done;episode;episodes;score;epsilon")
 
 for e in range(EPISODES):
     state = env.reset()
@@ -71,7 +73,7 @@ for e in range(EPISODES):
             agent.remember(state, action, reward, next_state, done)
         
         if done:
-            print("done     => episode: {}/{}, score: {:.2f}, e: {:.2}"
+            print("1;{};{};{:.2f};{:.2}"
             .format(e, EPISODES, reward, agent.epsilon))
             if(TRAINING):
                 agent.replay(len(agent.memory))
@@ -79,8 +81,8 @@ for e in range(EPISODES):
         if len(agent.memory) > batch_size and TRAINING:
             agent.replay(batch_size)
         if(time == MOVES-1):
-            print("not done => episode: {}/{}, score: {:.2f}, e: {:.2}"
-                .format(e, EPISODES, reward, agent.epsilon))
+            print("0;{};{};{:.2f};{:.2}"
+                .format(e, EPISODES, last_reward, agent.epsilon))
 
     if(TRAINING):
-        agent.save("./save/example_dqn11.h5")
+        agent.save("./save/execution1.h5")

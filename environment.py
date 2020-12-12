@@ -137,11 +137,11 @@ class environment:
         }
 
     def rewarde(self):
-        angle = math.atan2(self.robots[0].y-self.robots[0].y,self.robots[0].x-self.robots[0].x)
+        angle = math.atan2(self.robots[0].y-self.robots[1].y,self.robots[0].x-self.robots[1].x)
         angle2 = abs(math.cos(angle-self.robots[1].angle))
         num = 1000*(self.robots[0].raio+self.robots[1].raio)
         distance = math.hypot(self.robots[0].x-self.robots[1].x,self.robots[0].y-self.robots[1].y)
-        return num/distance+angle*100
+        return num/distance+angle2*300
 
     def done(self):
         return ((self.robots[0].raio+self.robots[1].raio)+3) > math.hypot(self.robots[0].x-self.robots[1].x,

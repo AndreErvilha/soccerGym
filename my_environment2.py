@@ -15,10 +15,12 @@ class MyEnvironment(environment):
         ball_pos = obs["ball"]["pos"]
         player_pos = obs["player"]["pos"]
         distance = math.hypot(ball_pos[0]-player_pos[0],ball_pos[1]-player_pos[1])
+        angle = math.atan2(ball_pos[1]-player_pos[1],ball_pos[0]-player_pos[0])
+
         return [
             (player_pos[0]-ball_pos[0])/distance,
             (player_pos[1]-ball_pos[1])/distance,
-            self.robots[1].angle
+            (angle-self.robots[1].angle)%(2*math.pi)
         ]
     
     # You can override methods and implement your own environment
@@ -28,8 +30,8 @@ class MyEnvironment(environment):
     def reset(self):
         invalid = True
         while(invalid):
-            x = random.randint(0,self.width)
-            y = random.randint(0,self.height)
+            x = random.randint(50,self.width-50)
+            y = random.randint(50,self.height-50)
             self.robots[0].pos(x,y)
             self.collide_with_wall(self.robots[1])
             invalid = self.verify_collisions()
@@ -37,8 +39,8 @@ class MyEnvironment(environment):
         return self.observation()
 
 
-    def rewarde(self):
-        return super().rewarde();
+    # def rewarde(self):
+    #     return super().rewarde();
 
 if __name__ == "__main__":
     env = MyEnvionment()
